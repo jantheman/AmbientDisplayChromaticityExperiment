@@ -1,4 +1,4 @@
-﻿class matrix3x3 {
+class matrix3x3 {
     constructor(m) {
         this.a = m[0][0]; this.b = m[0][1]; this.c = m[0][2];
         this.d = m[1][0]; this.e = m[1][1]; this.f = m[1][2];
@@ -50,7 +50,7 @@ class Kccv {
         ]);
 
         // average of black in XYZ
-        this.baseline = this.div(this.add(...calibration[0]), calibration[0].length);
+        this.baselineXYZ = this.YxyToXYZ(this.div(this.add(...calibration[0]), calibration[0].length));
 
         // fix data glow - for each calibration row, convert it to XYZ, subtract black of corresponding channels and convert back to Yxy
         const blackXYZ = calibration[0].map(this.YxyToXYZ);
@@ -186,7 +186,7 @@ class Kccv {
         let bY = this.calibration[Math.floor(b)][0].Y;
 
         let xyz = this.mRGBtoXYZ.translateTransform([rY, gY, bY]);
-        return this.add(xyz, this.baseline);
+        return this.add(xyz, this.baselineXYZ);
     }
 
     XYZtoui8rgb(xyz, params) {
@@ -214,7 +214,7 @@ class Kccv {
     }
 
     XYZtouiNrgb(xyz, params) {
-        xyz = this.sub(xyz, this.baseline);
+        xyz = this.sub(xyz, this.baselineXYZ);
         let rgb = this.kccv(xyz, 'XYZ', 'RGB');
 
         if (params?.spat_correct) {
