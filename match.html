@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Ambient Display Chromaticity Experiment</title>
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0
+        }
+    </style>
+    <script src="ScreenCalDat20122021-tablet-255levels.js"></script>
+    <script src="kccv.js"></script>
+    <script>
+        var tablet = new Kccv();
+        tablet.cal_init(CalData);
+
+        document.addEventListener('keydown', onKeyDown);
+
+        var step = 0.1;
+        var aStep = 0;
+        var bStep = 0;
+        var LStep = 500;
+
+        const D65 = [94.8110, 100, 107.304];
+
+        function showLAB() {
+            var LAB = [LStep * step, aStep * step, bStep * step];
+            var RGB = tablet.kccv(LAB, 'lab', 'ui8rgb', { whitepoint: D65, RGB_Ceil: true });
+
+            var matchSurface = document.getElementById("matchSurface");
+            if (matchSurface) matchSurface.style.backgroundColor = `rgb(${RGB[0]},${RGB[1]},${RGB[2]})`;
+
+            var matchDebug = document.getElementById("matchDebug");
+            if (matchDebug) matchDebug.innerHTML =
+                `L=${LAB[0].toFixed(1)} a=${LAB[1].toFixed(1)} b=${LAB[2].toFixed(1)}<br/>
+                 R=${RGB[0]} G=${RGB[1]} B=${RGB[2]}`;
+
+        }
+
+        function onKeyDown(e) {
+            switch (e.key) {
+                case "ArrowLeft": bStep--; break;
+                case "ArrowRight": bStep++; break;
+                case "ArrowUp": aStep++; break;
+                case "ArrowDown": aStep--; break;
+                case "PageUp":
+                case "+": LStep++; break;
+                case "PageDown":
+                case "-": LStep--; break;
+                case "Home":
+                    aStep = 0; bStep = 0; LStep = 500;
+                    break;
+                default:
+                    return;
+            }
+            showLAB();
+        }
+    </script>
+</head>
+<body id="matchSurface" onload="showLAB()">
+    <div id="matchDebug"></div>
+</body>
+</html>
