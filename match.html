@@ -8,6 +8,9 @@
             height: 100%;
             margin: 0
         }
+        body { display:flex; align-items: center; justify-content: center; background-color: black; }
+        #matchSurface { width: 5cm; height: 5cm; }
+        #matchDebug { position: absolute; top: 0; left: 0; color: white }
     </style>
     <script src="ScreenCalDat20122021-tablet-255levels.js"></script>
     <script src="kccv.js"></script>
@@ -17,16 +20,17 @@
 
         document.addEventListener('keydown', onKeyDown);
 
-        var step = 0.1;
+        var step = 1;
         var aStep = 0;
         var bStep = 0;
         var LStep = 500;
 
-        const D65 = [94.8110, 100, 107.304];
+        const D65_10deg = [100.0000, 0.3138, 0.3310];
+        const D65_2deg = [100.0000, 0.3150, 0.3279];
 
         function showLAB() {
             var LAB = [LStep * step, aStep * step, bStep * step];
-            var RGB = tablet.kccv(LAB, 'lab', 'ui8rgb', { whitepoint: D65, RGB_Ceil: true });
+            var RGB = tablet.kccv(LAB, 'lab', 'ui8rgb', { whitepoint: D65_2deg, RGB_Ceil: true });
 
             var matchSurface = document.getElementById("matchSurface");
             if (matchSurface) matchSurface.style.backgroundColor = `rgb(${RGB[0]},${RGB[1]},${RGB[2]})`;
@@ -58,7 +62,8 @@
         }
     </script>
 </head>
-<body id="matchSurface" onload="showLAB()">
+<body onload="showLAB()">
+    <div id="matchSurface"></div>
     <div id="matchDebug"></div>
 </body>
 </html>

@@ -1,4 +1,4 @@
-class matrix3x3 {
+﻿class matrix3x3 {
     constructor(m) {
         this.a = m[0][0]; this.b = m[0][1]; this.c = m[0][2];
         this.d = m[1][0]; this.e = m[1][1]; this.f = m[1][2];
@@ -131,9 +131,9 @@ class Kccv {
         return [Y, x, y];
     }
 
-    LABtoXYZ(LAB, whitepoint) {
+    LABtoXYZ(LAB, whitepointXYZ) {
         const L = LAB[0], a = LAB[1], b = LAB[2];
-        const Xr = whitepoint[0], Yr = whitepoint[1], Zr = whitepoint[2];
+        const Xr = whitepointXYZ[0], Yr = whitepointXYZ[1], Zr = whitepointXYZ[2];
 
         const ε = 216 / 24389;
         const κ = 24389 / 27;
@@ -253,7 +253,7 @@ class Kccv {
             case 'yxy': return this.YxyToXYZ(color);
             case 'ui8rgb': return this.ui8rgbToXYZ(color);
             case 'ui10rgb': return this.ui10rgbToXYZ(color);
-            case 'lab': return this.LABtoXYZ(color, params.whitepoint);
+            case 'lab': return this.LABtoXYZ(color, this.YxyToXYZ(params.whitepoint));
             case 'xyz': return [...color]; // copy
             default:
                 throw new Error(`Conversion from '${from}' not implemented.`);
